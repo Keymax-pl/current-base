@@ -2,108 +2,120 @@ import ResultBox from './ResultBox';
 import { render, screen, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
-  describe('Component ResultBox', () => {
-    it('should render proper info about conversion when PLN => USD', () => {
+const formatCurrency = (amount) => {
+  return parseFloat(amount).toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
 
-        const testCases = [
-            { from: 'PLN', to: 'USD', amount: 583 },
-            { from: 'PLN', to: 'USD', amount: 45 },
-            { from: 'PLN', to: 'USD', amount: 25408 },
-            { from: 'PLN', to: 'USD', amount: 144 },
-        ];
+const formatCurrency2 = (amount) => {
+  return parseFloat(amount).toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
 
-        for(const testObj of testCases) {
 
-            const amount = (testObj.amount).toFixed(2);
-            const from = testObj.from;
-            const to = testObj.to;
-      
-            render(<ResultBox from={from} to={to} amount={Number(amount)} />);
-      
-            const output = screen.getByTestId('output');
-      
-            const result = (amount/ 3.5).toFixed(2);
+describe('Component ResultBox', () => {
+  it('should render proper info about conversion when PLN => USD', () => {
+    const testCases = [
+      { from: 'PLN', to: 'USD', amount: 83 },
+      { from: 'PLN', to: 'USD', amount: 45 },
+      { from: 'PLN', to: 'USD', amount: 418 },
+      { from: 'PLN', to: 'USD', amount: 44 },
+    ];
 
-            expect(output).toHaveTextContent(`${from} ${amount} = $${result}`);
+    for (const testObj of testCases) {
+      const amount = (testObj.amount).toFixed(2);
+      const from = testObj.from;
+      const to = testObj.to;
 
-            cleanup();
-          }
+      render(<ResultBox from={from} to={to} amount={Number(amount)} />);
 
-      });
+      const output = screen.getByTestId('output');
 
-      it('should render proper info about conversion when USD => PLN', () => {
+      // Skorzystaj z funkcji formatCurrency
+      const result = formatCurrency(amount / 3.5);
 
-        const testCases = [
-            { from: 'USD', to: 'PLN', amount: 475 },
-            { from: 'USD', to: 'PLN', amount: 56 },
-            { from: 'USD', to: 'PLN', amount: 24 },
-            { from: 'USD', to: 'PLN', amount: 82 },
-        ];
+      expect(output).toHaveTextContent(`${from} ${amount} = ${result}`);
 
-        for (const testObj of testCases) {
+      cleanup();
+    }
+  });
 
-            const amount = (testObj.amount).toFixed(2);
-            const from = testObj.from;
-            const to = testObj.to;
-      
-            render(<ResultBox from={from} to={to} amount={Number(amount)} />);
-      
-            const output = screen.getByTestId('output');
-            const result = (amount*3.5).toFixed(2);
-      
-            expect(output).toHaveTextContent(`$${amount} = ${to} ${result}`);
-      
-            cleanup();
-          }
-      });
-      it('should render proper info about conversion when PLN == PLN', () => {
+  it('should render proper info about conversion when USD => PLN', () => {
+    const testCases = [
+      { from: 'USD', to: 'PLN', amount: 445 },
+      { from: 'USD', to: 'PLN', amount: 556 },
+      { from: 'USD', to: 'PLN', amount: 24 },
+      { from: 'USD', to: 'PLN', amount: 22 },
+    ];
 
-        const testCases = [
-            { from: 'PLN', to: 'PLN', amount: 457 },
-            { from: 'PLN', to: 'PLN', amount: 554 },
-            { from: 'PLN', to: 'PLN', amount: 5 },
-            { from: 'PLN', to: 'PLN', amount: 15 },
-        ];
-    
-        for (const testObj of testCases) {
-    
-          const amount = (testObj.amount).toFixed(2);
-          const from = testObj.from;
-          const to = testObj.to;
-    
-          render(<ResultBox from={from} to={to} amount={Number(amount)} />);
-    
-          const output = screen.getByTestId('output');
-    
-          expect(output).toHaveTextContent(`${from} ${amount} = ${to} ${amount}`);
-    
-          cleanup();
-        }
-    });
+    for (const testObj of testCases) {
+      const amount = (testObj.amount).toFixed(2);
+      const from = testObj.from;
+      const to = testObj.to;
 
-    it('should render proper info about conversion when amount is negative', () => {
+      render(<ResultBox from={from} to={to} amount={Number(amount)} />);
 
-      const testCases = [
-  
-        { from: 'PLN', to: 'USD', amount: '-45.00'},
-        { from: 'USD', to: 'PLN', amount: '-7.00'},
-        { from: 'USD', to: 'PLN', amount: '-190.00'},
-        { from: 'PLN', to: 'USD', amount: '-11.00'},  
-      ];
-  
-      for (const testObj of testCases) {
-          const amount = testObj.amount;
-          const from = testObj.from;
-          const to = testObj.to;
-  
-          render(<ResultBox from={from} to={to} amount={Number(amount)} />);
-  
-          const negativeValue = screen.getByTestId('negativeValue');
-  
-          expect(negativeValue).toHaveTextContent(`Wrong value...`);
-  
-          cleanup();
-      }
-  });  
+      const output = screen.getByTestId('output');
 
+      // Skorzystaj z funkcji formatCurrency
+      const result = formatCurrency2(amount * 3.5);
+
+      expect(output).toHaveTextContent(`$${amount} = ${to} ${result}`);
+
+      cleanup();
+    }
+  });
+
+  it('should render proper info about conversion when PLN == PLN', () => {
+    const testCases = [
+      { from: 'PLN', to: 'PLN', amount: 7452 },
+      { from: 'PLN', to: 'PLN', amount: 477 },
+      { from: 'PLN', to: 'PLN', amount: 577 },
+      { from: 'PLN', to: 'PLN', amount: 175 },
+    ];
+
+    for (const testObj of testCases) {
+      const amount = (testObj.amount).toFixed(2);
+      const from = testObj.from;
+      const to = testObj.to;
+
+      render(<ResultBox from={from} to={to} amount={Number(amount)} />);
+
+      const output = screen.getByTestId('output');
+
+      // Skorzystaj z funkcji formatCurrency
+      expect(output).toHaveTextContent(`${from} ${formatCurrency2(amount)} = ${to} ${formatCurrency2(amount)}`);
+
+      cleanup();
+    }
+  });
+
+  it('should render proper info about conversion when amount is negative', () => {
+    const testCases = [
+      { from: 'PLN', to: 'USD', amount: '-45.00' },
+      { from: 'USD', to: 'PLN', amount: '-7.00' },
+      { from: 'USD', to: 'PLN', amount: '-190.00' },
+      { from: 'PLN', to: 'USD', amount: '-11.00' },
+    ];
+
+    for (const testObj of testCases) {
+      const amount = testObj.amount;
+      const from = testObj.from;
+      const to = testObj.to;
+
+      render(<ResultBox from={from} to={to} amount={Number(amount)} />);
+
+      const negativeValue = screen.getByTestId('negativeValue');
+
+      expect(negativeValue).toHaveTextContent(`Wrong value...`);
+
+      cleanup();
+    }
+  });
 });
